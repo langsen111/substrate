@@ -1179,6 +1179,7 @@ mod tests {
 		);
 		ext.kill_child_storage(
 			child_info,
+			None,
 		);
 		assert_eq!(
 			ext.child_storage(
