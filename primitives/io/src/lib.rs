@@ -279,7 +279,25 @@ pub trait DefaultChildStorage {
 		storage_key: &[u8],
 	) {
 		let child_info = ChildInfo::new_default(storage_key);
-		self.kill_child_storage(&child_info, u32::max_value());
+		self.kill_child_storage(&child_info, None);
+	}
+
+	/// Clear at most `limit` keys from the specified child storage.
+	///
+	/// Deletes all keys from the overlay and up to `limit` keys from the backend.
+	/// This can be used to partially delete a child trie in case it is too large
+	/// to delete in one go (block).
+	///
+	/// Please note that keys that are residing in the overlay when issuing this call
+	/// are all deleted disregarding the `limit`. Only keys written during the current
+	/// block are part of the overlay.
+	fn storage_kill_limited(
+		&mut self,
+		storage_key: &[u8],
+		limit: u32,
+	) -> bool {
+		let child_info = ChildInfo::new_default(storage_key);
+		self.kill_child_storage(&child_info, Some(limit))
 	}
 
 	/// Check a child storage key.
